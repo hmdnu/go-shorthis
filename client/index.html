@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-size: 18px;
+      }
+
+      body {
+        background: #333;
+        font-family: Arial, Helvetica, sans-serif;
+        height: 100vh;
+        display: grid;
+        place-content: center;
+      }
+
+      .container {
+        background: rgb(255, 255, 255);
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      form input {
+        padding: 7px;
+        border: 2px solid #555;
+        border-radius: 5px;
+        outline: none;
+        width: 50vw;
+      }
+
+      form button {
+        padding: 10px;
+        border-radius: 5px;
+        outline: none;
+        border: none;
+        background: rgb(222, 184, 135);
+        color: white;
+      }
+
+      form button:hover {
+        background: rgb(209, 154, 82);
+        cursor: pointer;
+      }
+
+      .p-url {
+        margin-top: 15px;
+      }
+      .title {
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p class="title">URL Shortener</p>
+      <form action="post">
+        <input type="text" placeholder="enter url" />
+        <button class="shorten-btn">Shorten</button>
+      </form>
+
+      <div class="container-url"></div>
+    </div>
+
+    <script>
+      const form = document.querySelector("form");
+      const input = document.querySelector("input");
+      const urlContainer = document.querySelector(".container-url");
+
+      form.addEventListener("submit", handleSubmit);
+
+      async function handleSubmit(e) {
+        e.preventDefault();
+
+        const shortenedURL = await shortenURL(input.value);
+
+        urlContainer.innerHTML = `<p class="p-url">Your url : <a href="${shortenedURL.shortenUrl}" target="_blank">${shortenedURL.shortenUrl}</a>`;
+      }
+
+      async function shortenURL(url) {
+        try {
+          const data = await fetch("http://localhost:8080", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              originalUrl: url,
+            }),
+          });
+
+          return await data.json();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    </script>
+  </body>
+</html>
