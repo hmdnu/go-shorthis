@@ -1,4 +1,4 @@
 tmp
 .prettierrc
 .env
-./database/db.sql
+db.sql
