@@ -11,6 +11,7 @@ var (
 	PORT       string
 	SERVER_URL string
 	DATABASE   string
+	DRIVER     string
 )
 
 func init() {
@@ -23,4 +24,5 @@ func init() {
 	PORT = os.Getenv("PORT")
 	SERVER_URL = os.Getenv("SERVER_URL")
 	DATABASE = os.Getenv("DATABASE")
+	DRIVER = os.Getenv("DRIVER")
 }

@@ -42,11 +42,6 @@ func HandleShorten(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// save to db
-	// if _, err := database.DB.Exec("INSERT INTO url VALUES(?, ?, ?);", url.ID, url.OriginalUrl, url.ShortCode); err != nil {
-	// 	utils.ErrorResponse(w, "internal server error", http.StatusInternalServerError)
-	// 	log.Fatalln("cant insert into table url, error :", err.Error())
-	// }
-
 	if _, err := url.Insert(); err != nil {
 		utils.ErrorResponse(w, "internal server error", http.StatusInternalServerError)
 		log.Fatalln("cant insert into table url, error :", err.Error())
