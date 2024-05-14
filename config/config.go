@@ -7,8 +7,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var PORT string
-var SERVER_URL string
+var (
+	PORT       string
+	SERVER_URL string
+	DATABASE   string
+)
 
 func init() {
 	err := godotenv.Load(".env")
@@ -19,4 +22,5 @@ func init() {
 
 	PORT = os.Getenv("PORT")
 	SERVER_URL = os.Getenv("SERVER_URL")
+	DATABASE = os.Getenv("DATABASE")
 }

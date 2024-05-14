@@ -1,8 +1,6 @@
 package common
 
-type URL struct {
-	OriginalUrl string `json:"originalUrl"`
-	ShortenUrl  string `json:"shortenUrl"`
+type Error struct {
+	Message string `json:"message"`
+	Status  int    `json:"status"`
 }
-
-var Urls = make(map[string]string)

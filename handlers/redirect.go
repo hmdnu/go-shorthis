@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"database/sql"
+	"log"
 	"net/http"
 
-	"github.com/hmdnu/go-shorthis/common"
+	"github.com/hmdnu/go-shorthis/model"
+	"github.com/hmdnu/go-shorthis/utils"
 )
 
 func HandleRedirect(w http.ResponseWriter, req *http.Request) {
@@ -11,21 +14,28 @@ func HandleRedirect(w http.ResponseWriter, req *http.Request) {
 	shortKey := req.PathValue("shortKey")
 
 	if req.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		utils.ErrorResponse(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	if shortKey == "" {
-		http.Error(w, "shortened key is missing", http.StatusBadRequest)
+		utils.ErrorResponse(w, "shortened key is missing", http.StatusBadRequest)
 		return
 	}
 
-	originalUrl, found := common.Urls[shortKey]
+	// get from db
+	var url model.URL
 
-	if !found {
-		http.Error(w, "shortened key not found", http.StatusNotFound)
-		return
+	if err := url.GetShortCode(shortKey); err != nil {
+
+		if err == sql.ErrNoRows {
+			utils.ErrorResponse(w, "cant find url shortcode", http.StatusNotFound)
+			return
+		}
+
+		utils.ErrorResponse(w, "internal server error", http.StatusInternalServerError)
+		log.Fatalln("error querying row", err.Error())
 	}
 
-	http.Redirect(w, req, originalUrl, http.StatusMovedPermanently)
+	http.Redirect(w, req, url.OriginalUrl, http.StatusMovedPermanently)
 }

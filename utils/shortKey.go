@@ -4,12 +4,12 @@ import (
 	"math/rand"
 )
 
-func GenerateShortKey() string {
+const (
+	charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	keyLen  = 5
+)
 
-	const (
-		charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-		keyLen  = 5
-	)
+func GenerateShortKey() string {
 
 	shortKey := make([]byte, keyLen)
 

@@ -6,39 +6,60 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/hmdnu/go-shorthis/common"
 	"github.com/hmdnu/go-shorthis/config"
+	"github.com/hmdnu/go-shorthis/model"
 	"github.com/hmdnu/go-shorthis/utils"
 )
 
 func HandleShorten(w http.ResponseWriter, req *http.Request) {
-	var URL common.URL
+	var URL model.URL
 
 	if req.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		utils.ErrorResponse(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	err := json.NewDecoder(req.Body).Decode(&URL)
 
 	if err != nil {
-		http.Error(w, "cant decode json", http.StatusInternalServerError)
+		utils.ErrorResponse(w, "internal server error", http.StatusMethodNotAllowed)
 		return
 	}
 
 	if URL.OriginalUrl == "" {
-		http.Error(w, "url input not found", http.StatusNotFound)
+		utils.ErrorResponse(w, "url input not found", http.StatusNotFound)
 		return
 	}
 
 	shortKey := utils.GenerateShortKey()
-	common.Urls[shortKey] = URL.OriginalUrl
-	URL.ShortenUrl = fmt.Sprintf("%s:%s/%s", config.SERVER_URL, config.PORT, shortKey)
+	uuid := utils.GenerateUUID()
 
-	json, err := json.Marshal(URL)
+	// make struct to save to db
+	url := model.URL{
+		ID:          uuid,
+		OriginalUrl: URL.OriginalUrl,
+		ShortCode:   shortKey,
+	}
+
+	// save to db
+	// if _, err := database.DB.Exec("INSERT INTO url VALUES(?, ?, ?);", url.ID, url.OriginalUrl, url.ShortCode); err != nil {
+	// 	utils.ErrorResponse(w, "internal server error", http.StatusInternalServerError)
+	// 	log.Fatalln("cant insert into table url, error :", err.Error())
+	// }
+
+	if _, err := url.Insert(); err != nil {
+		utils.ErrorResponse(w, "internal server error", http.StatusInternalServerError)
+		log.Fatalln("cant insert into table url, error :", err.Error())
+	}
+
+	// assign URL struct
+	URL.ID = uuid
+	URL.ShortCode = fmt.Sprintf("%s:%s/%s", config.SERVER_URL, config.PORT, shortKey)
+
+	json, err := json.Marshal(&URL)
 
 	if err != nil {
-		http.Error(w, "cant marshal json", http.StatusInternalServerError)
+		utils.ErrorResponse(w, "cant marshal json", http.StatusInternalServerError)
 		log.Fatalln("cant marshal json", err.Error())
 	}
 
