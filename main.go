@@ -13,8 +13,8 @@ import (
 
 func main() {
 
-	http.HandleFunc("/", middlewares.Cors(handlers.HandleShorten))
 	http.HandleFunc("/{shortKey}", middlewares.Cors(handlers.HandleRedirect))
+	http.HandleFunc("/", middlewares.Cors(handlers.HandleShorten))
 
 	fmt.Println("server start in port " + config.PORT)
 	if err := http.ListenAndServe(":"+config.PORT, nil); err != nil {

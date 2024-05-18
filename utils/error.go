@@ -4,15 +4,18 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"github.com/hmdnu/go-shorthis/common"
 )
+
+type Error struct {
+	Message string `json:"message"`
+	Status  int    `json:"status"`
+}
 
 func ErrorResponse(w http.ResponseWriter, message string, status int) {
 
 	w.WriteHeader(status)
 
-	res := common.Error{
+	res := Error{
 		Message: message,
 		Status:  status,
 	}

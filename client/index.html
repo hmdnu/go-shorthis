@@ -82,7 +82,12 @@
 
         const shortenedURL = await shortenURL(input.value);
 
-        urlContainer.innerHTML = `<p class="p-url">Your url : <a href="${shortenedURL.shortenUrl}" target="_blank">${shortenedURL.shortenUrl}</a>`;
+        if (shortenedURL.message) {
+          urlContainer.innerHTML = `<p class="p-url">${shortenedURL.message}</p>`;
+          return;
+        }
+
+        urlContainer.innerHTML = `<p class="p-url">Your url : <a href="${shortenedURL.shortUrl}" target="_blank">${shortenedURL.shortUrl}</a>`;
       }
 
       async function shortenURL(url) {
@@ -93,13 +98,13 @@
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              originalUrl: url,
+              url,
             }),
           });
 
           return await data.json();
         } catch (err) {
-          console.error(err);
+          console.log(err);
         }
       }
     </script>

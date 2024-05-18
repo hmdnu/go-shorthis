@@ -11,12 +11,12 @@ import (
 
 func HandleRedirect(w http.ResponseWriter, req *http.Request) {
 
-	shortKey := req.PathValue("shortKey")
-
 	if req.Method != http.MethodGet {
 		utils.ErrorResponse(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	shortKey := req.PathValue("shortKey")
 
 	if shortKey == "" {
 		utils.ErrorResponse(w, "shortened key is missing", http.StatusBadRequest)
@@ -26,7 +26,7 @@ func HandleRedirect(w http.ResponseWriter, req *http.Request) {
 	// get from db
 	var url model.URL
 
-	if err := url.GetShortCode(shortKey); err != nil {
+	if err := url.GetShortURL(shortKey); err != nil {
 
 		if err == sql.ErrNoRows {
 			utils.ErrorResponse(w, "cant find url shortcode", http.StatusNotFound)

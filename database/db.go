@@ -15,7 +15,7 @@ func init() {
 
 	var err error
 
-	DB, err = sql.Open("mysql", config.DATABASE)
+	DB, err = sql.Open(config.DRIVER, config.DATABASE)
 
 	if err != nil {
 		log.Fatalln("cant connect to database", err.Error())
